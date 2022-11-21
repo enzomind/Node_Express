@@ -1,7 +1,8 @@
 const express = require('express');
 const path = require('path');
 
-const morgan = require('morgan');
+const morgan = require('morgan'); //추가 로그 확인 시 사용
+
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
 const dotenv = require('dotenv');
@@ -10,11 +11,18 @@ dotenv.config();
 const app = express();
 app.set('port',process.env.PORT || 3000);
 
+//static 미들웨어 : 정적인 파일들을 제공하는 라우터 역할
 app.use(morgan('dev'));
 app.use('/', express.static(path.join(__dirname, 'public')));
+
+//요청의 본문에 있는 데이터를 해석해 req.body 객체로 만들어주는 미들웨어
 app.use(express.json());
 app.use(express.urlencoded({extended: false}));
+
+//요청의 쿠키를 해석해 req.cookies 객체로 만듬.
 app.use(cookieParser(process.env.COOKIE_SECRET));
+
+//세션 관리용 미들웨어
 app.use(session({
     resave: false,
     saveUninitialized: false,
